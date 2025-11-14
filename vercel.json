@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
@@ -21,6 +20,10 @@
     {
       "source": "/css1/(.*)",
       "destination": "/css1/$1"
+    },
+    {
+      "source": "/main.js",
+      "destination": "/main.js"
     },
     {
       "source": "/flower.html",
@@ -46,7 +49,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(?:js|css|jpg|jpeg|png|gif|ico|svg|mp3|wav|ogg))",
+      "source": "/(.*\\.(js|css|jpg|jpeg|png|gif|ico|svg|mp3|wav|ogg))",
       "headers": [
         {
           "key": "Cache-Control",
@@ -70,16 +73,6 @@
           "value": "1; mode=block"
         }
       ]
-    }
-  ],
-  "routes": [
-    {
-      "src": "/flower.html",
-      "dest": "/flower.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
   ]
 }
