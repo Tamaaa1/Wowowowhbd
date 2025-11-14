@@ -1,14 +1,33 @@
-import { motion } from 'motion/react';
-import { Heart, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from "motion/react";
+import { useState, useEffect } from "react";
 
 export function PolaroidCard() {
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const photos = [
+    "/src/styles/foto/1.jpg",
+    "/src/styles/foto/2.jpg",
+    "/src/styles/foto/3.jpg",
+    "/src/styles/foto/4.jpg",
+    "/src/styles/foto/5.jpg",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % photos.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [photos.length]);
+
+  
+
   return (
-    <div className="relative">
+    <div className="relative w-full flex items-center justify-center p-4 sm:p-6 md:p-8">
       {/* Floating hearts and sparkles */}
       {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-xl md:text-2xl"
+          className="absolute text-lg sm:text-xl md:text-2xl"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
@@ -25,94 +44,53 @@ export function PolaroidCard() {
             delay: i * 0.4,
           }}
         >
-          {i % 2 === 0 ? '💕' : '✨'}
+          {i % 2 === 0 ? "💕" : "✨"}
         </motion.div>
       ))}
 
       {/* Main Polaroid */}
       <motion.div
-        className="bg-white p-3 md:p-4 shadow-2xl max-w-sm md:max-w-md mx-4"
+        className="bg-white p-3 sm:p-4 md:p-5 shadow-2xl w-full max-w-[280px] sm:max-w-sm md:max-w-md"
         style={{
-          transform: 'rotate(-2deg)',
+          transform: "rotate(-2deg)",
         }}
-        whileHover={{ 
+        whileHover={{
           rotate: 0,
           scale: 1.05,
         }}
-        transition={{ type: 'spring', stiffness: 300 }}
+        transition={{ type: "spring", stiffness: 300 }}
       >
-        {/* Photo Area */}
+        {/* Photo Area with Carousel */}
         <div className="bg-gradient-to-br from-[#F5F5DC] to-[#E8DCC4] aspect-square relative overflow-hidden">
-          {/* Decorative content in photo */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center space-y-4 md:space-y-6 p-4 md:p-6">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
-                className="text-6xl md:text-8xl"
-              >
-                🎂
-              </motion.div>
-              
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="text-2xl md:text-4xl text-[#8FA378]"
-                style={{ fontFamily: 'cursive' }}
-              >
-                Happy Birthday!
-              </motion.h2>
+          {/* Carousel Photos */}
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentPhotoIndex}
+              src={photos[currentPhotoIndex]}
+              alt={`Birthday Memory ${currentPhotoIndex + 1}`}
+              className="w-full h-full object-cover absolute inset-0"
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.5 }}
+            />
+          </AnimatePresence>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="flex justify-center gap-2 md:gap-3 text-3xl md:text-4xl"
-              >
-                {['🌸', '🌺', '🌼', '🌷'].map((flower, i) => (
-                  <motion.span
-                    key={i}
-                    animate={{
-                      rotate: [0, 10, -10, 0],
-                      y: [0, -5, 0],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: i * 0.2,
-                    }}
-                  >
-                    {flower}
-                  </motion.span>
-                ))}
-              </motion.div>
+          <div className="absolute inset-0 bg-black bg-opacity-20" />
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9 }}
-                className="flex justify-center gap-2 md:gap-3"
-              >
-                <div className="bg-[#9CAF88] rounded-full p-2 md:p-3">
-                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-white fill-white" />
-                </div>
-                <div className="bg-[#B5C99A] rounded-full p-2 md:p-3">
-                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white fill-white" />
-                </div>
-                <div className="bg-[#8FA378] rounded-full p-2 md:p-3">
-                  <Heart className="w-4 h-4 md:w-5 md:h-5 text-white fill-white" />
-                </div>
-              </motion.div>
-            </div>
+          {/* Carousel Indicators */}
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10">
+            {photos.map((_, index) => (
+              <div
+                key={index}
+                className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
+                  index === currentPhotoIndex
+                    ? "bg-white w-4 sm:w-6"
+                    : "bg-white bg-opacity-50"
+                }`}
+              />
+            ))}
           </div>
-
-          {/* Corner decorations */}
-          <div className="absolute top-2 left-2 text-xl md:text-2xl opacity-30">🌿</div>
-          <div className="absolute top-2 right-2 text-xl md:text-2xl opacity-30">🌿</div>
-          <div className="absolute bottom-2 left-2 text-xl md:text-2xl opacity-30">🌿</div>
-          <div className="absolute bottom-2 right-2 text-xl md:text-2xl opacity-30">🌿</div>
         </div>
 
         {/* Caption Area */}
@@ -120,27 +98,27 @@ export function PolaroidCard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
-          className="pt-3 md:pt-4 pb-1 md:pb-2 px-2"
+          className="pt-3 sm:pt-4 md:pt-5 pb-1 md:pb-2 px-2"
         >
           <p
-            className="text-center text-[#6B7F5F] text-sm md:text-base"
-            style={{ fontFamily: 'cursive' }}
+            className="text-center text-[#6B7F5F] text-sm sm:text-base md:text-lg font-semibold"
+            style={{ fontFamily: "cursive" }}
           >
-            Kenangan indah di hari spesialmu ✨
+            HEHEHEHEHE
           </p>
           <p
-            className="text-center text-[#8FA378] text-xs md:text-sm mt-1 md:mt-2"
-            style={{ fontFamily: 'serif' }}
+            className="text-center text-[#8FA378] text-xs sm:text-sm md:text-base mt-1 md:mt-2"
+            style={{ fontFamily: "serif" }}
           >
-            Semoga selalu bahagia! 💕
+            Sekali lagi Happy Birthday yaaa!
           </p>
         </motion.div>
       </motion.div>
 
-      {/* Additional scattered polaroids in background */}
+      {/* Additional scattered polaroids in background - empty/decorative */}
       <motion.div
-        className="absolute -bottom-8 -left-8 md:-bottom-12 md:-left-12 w-20 h-24 md:w-32 md:h-40 bg-white shadow-lg -z-10"
-        style={{ rotate: '15deg' }}
+        className="absolute -bottom-8 -left-8 md:-bottom-12 md:-left-12 w-20 h-24 sm:w-24 sm:h-32 md:w-32 md:h-40 bg-white shadow-lg -z-10 p-1.5 md:p-2"
+        style={{ rotate: "15deg" }}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.6, scale: 1 }}
         transition={{ delay: 0.2 }}
@@ -149,8 +127,8 @@ export function PolaroidCard() {
       </motion.div>
 
       <motion.div
-        className="absolute -top-8 -right-8 md:-top-12 md:-right-12 w-20 h-24 md:w-32 md:h-40 bg-white shadow-lg -z-10"
-        style={{ rotate: '-12deg' }}
+        className="absolute -top-8 -right-8 md:-top-12 md:-right-12 w-20 h-24 sm:w-24 sm:h-32 md:w-32 md:h-40 bg-white shadow-lg -z-10 p-1.5 md:p-2"
+        style={{ rotate: "-12deg" }}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 0.6, scale: 1 }}
         transition={{ delay: 0.4 }}

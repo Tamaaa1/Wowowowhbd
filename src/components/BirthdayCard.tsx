@@ -1,5 +1,5 @@
-import { motion } from 'motion/react';
-import { Heart, Sparkles, Cake } from 'lucide-react';
+import { motion } from "motion/react";
+import { Heart, Sparkles, Cake } from "lucide-react";
 
 interface BirthdayCardProps {
   onCakeClick: () => void;
@@ -10,7 +10,7 @@ export function BirthdayCard({ onCakeClick }: BirthdayCardProps) {
     <motion.div
       className="relative bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-6 md:p-12 max-w-2xl border-4 border-[#B5C99A] mx-4"
       whileHover={{ scale: 1.02 }}
-      transition={{ type: 'spring', stiffness: 300 }}
+      transition={{ type: "spring", stiffness: 300 }}
     >
       {/* Decorative Corners */}
       <div className="absolute -top-4 -left-4 md:-top-6 md:-left-6 w-12 h-12 md:w-16 md:h-16 bg-[#9CAF88] rounded-full flex items-center justify-center">
@@ -35,35 +35,12 @@ export function BirthdayCard({ onCakeClick }: BirthdayCardProps) {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          <h1 className="text-3xl md:text-6xl text-[#8FA378] mb-2" style={{ fontFamily: 'cursive' }}>
-            Selamat Ulang Tahun!
+          <h1
+            className="text-3xl md:text-6xl text-[#8FA378] mb-2"
+            style={{ fontFamily: "cursive" }}
+          >
+            Happy Birthday Sasa!
           </h1>
-        </motion.div>
-
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 1, type: 'spring', stiffness: 200 }}
-          className="flex justify-center gap-2 text-3xl md:text-5xl"
-        >
-          <motion.span
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
-          >
-            🌸
-          </motion.span>
-          <motion.span
-            animate={{ rotate: [0, -10, 10, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2, delay: 0.2 }}
-          >
-            🌺
-          </motion.span>
-          <motion.span
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2, delay: 0.4 }}
-          >
-            🌼
-          </motion.span>
         </motion.div>
 
         <motion.p
@@ -71,9 +48,11 @@ export function BirthdayCard({ onCakeClick }: BirthdayCardProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
           className="text-base md:text-xl text-[#6B7F5F] px-4 md:px-8"
-          style={{ fontFamily: 'serif' }}
+          style={{ fontFamily: "serif" }}
         >
-          Semoga hari spesialmu dipenuhi dengan kebahagiaan, cinta, dan bunga-bunga indah yang selalu mekar di taman kehidupanmu 🌷
+          WOWOWOW ada yang ulang tahun hari inii, it’s your special day! hehehe.
+          Semoga setiap langkahmu dipenuhi kebahagiaan, kesempatan baru, dan
+          orang-orang baik di sekitarmu. aamiin
         </motion.p>
 
         <motion.div
@@ -87,7 +66,7 @@ export function BirthdayCard({ onCakeClick }: BirthdayCardProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <p style={{ fontFamily: 'cursive' }}>Dengan Cinta ❤️</p>
+            <p style={{ fontFamily: "cursive" }}>Klik Kue Dibawah Sa</p>
           </motion.div>
         </motion.div>
       </div>

@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { DrawingCake } from './DrawingCake';
-import { PolaroidCard } from './PolaroidCard';
-import { ArrowLeft } from 'lucide-react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { DrawingCake } from "./DrawingCake";
+import { PolaroidCard } from "./PolaroidCard";
+import { ArrowLeft } from "lucide-react";
 
 interface CakePageProps {
   onBack: () => void;
@@ -48,10 +48,10 @@ export function CakePage({ onBack }: CakePageProps) {
             transition={{
               duration: 3 + i,
               repeat: Infinity,
-              repeatType: 'reverse',
+              repeatType: "reverse",
             }}
           >
-            {['🎂', '🎉', '🎊', '🎈'][i % 4]}
+            {["🎂", "🎉", "🎊", "🎈"][i % 4]}
           </motion.div>
         ))}
       </div>
@@ -74,17 +74,27 @@ export function CakePage({ onBack }: CakePageProps) {
                   transition={{ delay: 4 }}
                   className="text-center space-y-2 md:space-y-3"
                 >
-                  <h2 className="text-2xl md:text-4xl text-[#8FA378]" style={{ fontFamily: 'cursive' }}>
-                    Tiup Lilinnya! 🎂
+                  <h2
+                    className="text-2xl md:text-4xl text-[#8FA378]"
+                    style={{ fontFamily: "cursive" }}
+                  >
+                    Tiup Lilinnya!
                   </h2>
-                  <p className="text-base md:text-xl text-[#6B7F5F]" style={{ fontFamily: 'serif' }}>
-                    Klik atau sentuh lilin untuk meniupnya
+                  <p
+                    className="text-base md:text-xl text-[#6B7F5F]"
+                    style={{ fontFamily: "serif" }}
+                  >
+                    Sentuh apinya untuk tiup lilinnya dan liat apa yang terjadi
+                    mwheheehe
                   </p>
                 </motion.div>
               )}
 
               {/* Drawing Cake Component */}
-              <DrawingCake onCandlesBlown={handleCandlesBlown} candlesBlown={candlesBlown} />
+              <DrawingCake
+                onCandlesBlown={handleCandlesBlown}
+                candlesBlown={candlesBlown}
+              />
 
               {candlesBlown && !showPolaroid && (
                 <motion.div
@@ -92,7 +102,10 @@ export function CakePage({ onBack }: CakePageProps) {
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center space-y-2 md:space-y-3"
                 >
-                  <p className="text-xl md:text-3xl text-[#8FA378]" style={{ fontFamily: 'cursive' }}>
+                  <p
+                    className="text-xl md:text-3xl text-[#8FA378]"
+                    style={{ fontFamily: "cursive" }}
+                  >
                     Yay! 🎉
                   </p>
                   <p className="text-base md:text-lg text-[#6B7F5F]">
@@ -106,9 +119,29 @@ export function CakePage({ onBack }: CakePageProps) {
               key="polaroid"
               initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', stiffness: 200 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="flex flex-col items-center gap-4"
             >
               <PolaroidCard />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  // Save music position before navigating
+                  const audio = document.querySelector("audio");
+                  if (audio) {
+                    localStorage.setItem(
+                      "musicCurrentTime",
+                      audio.currentTime.toString(),
+                    );
+                  }
+                  window.location.href = "flower.html";
+                }}
+                className="mt-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-lg hover:bg-white text-[#6B7F5F] font-semibold"
+                style={{ fontFamily: "cursive" }}
+              >
+                Coba Klik Ini Saa
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
