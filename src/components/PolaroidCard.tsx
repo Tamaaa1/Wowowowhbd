@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 export function PolaroidCard() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const photos = [
-    "/src/styles/foto/1.jpg",
-    "/src/styles/foto/2.jpg",
-    "/src/styles/foto/3.jpg",
-    "/src/styles/foto/4.jpg",
-    "/src/styles/foto/5.jpg",
+    "/foto/1.jpg",
+    "/foto/2.jpg",
+    "/foto/3.jpg",
+    "/foto/4.jpg",
+    "/foto/5.jpg",
   ];
 
   useEffect(() => {
@@ -18,8 +18,6 @@ export function PolaroidCard() {
 
     return () => clearInterval(interval);
   }, [photos.length]);
-
-  
 
   return (
     <div className="relative w-full flex items-center justify-center p-4 sm:p-6 md:p-8">
