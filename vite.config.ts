@@ -4,6 +4,7 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/",
   publicDir: "public",
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
@@ -55,10 +56,16 @@ export default defineConfig({
   build: {
     target: "esnext",
     outDir: "dist",
+    assetsDir: "assets",
     copyPublicDir: true,
+    sourcemap: false,
+    minify: "esbuild",
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
+      },
+      output: {
+        manualChunks: undefined,
       },
     },
   },
