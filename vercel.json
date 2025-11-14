@@ -3,28 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "installCommand": "npm install",
-  "devCommand": "npm run dev",
   "rewrites": [
-    {
-      "source": "/assets/(.*)",
-      "destination": "/assets/$1"
-    },
-    {
-      "source": "/foto/(.*)",
-      "destination": "/foto/$1"
-    },
-    {
-      "source": "/music/(.*)",
-      "destination": "/music/$1"
-    },
-    {
-      "source": "/css1/(.*)",
-      "destination": "/css1/$1"
-    },
-    {
-      "source": "/main.js",
-      "destination": "/main.js"
-    },
     {
       "source": "/flower.html",
       "destination": "/flower.html"
@@ -36,43 +15,6 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*\\.(js|css|jpg|jpeg|png|gif|ico|svg|mp3|wav|ogg))",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
     }
   ]
 }
