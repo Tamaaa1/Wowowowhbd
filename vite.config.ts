@@ -6,10 +6,14 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: "automatic",
+      jsxImportSource: "react",
     }),
   ],
   base: "/",
   publicDir: "public",
+  esbuild: {
+    jsxInject: `import React from 'react'`,
+  },
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
     alias: {
