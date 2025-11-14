@@ -3,13 +3,16 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      jsxRuntime: "automatic",
+    }),
+  ],
   base: "/",
   publicDir: "public",
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
     alias: {
-      // FIX: hapus '@version' karena menyebabkan Vercel gagal resolve module
       vaul: "vaul",
       sonner: "sonner",
       recharts: "recharts",
@@ -68,6 +71,9 @@ export default defineConfig({
         manualChunks: undefined,
       },
     },
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "motion"],
   },
   server: {
     port: 3000,
