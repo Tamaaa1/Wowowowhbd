@@ -20,6 +20,28 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Alternative audio implementation
+  useEffect(() => {
+    // Create additional audio element as fallback
+    const fallbackAudio = new Audio("/music/Sempurna.mp3");
+    fallbackAudio.loop = true;
+    fallbackAudio.volume = 0.25;
+
+    const tryPlayFallback = () => {
+      fallbackAudio.play().catch(() => {
+        console.log("Fallback audio also blocked");
+      });
+    };
+
+    // Try to play fallback audio after a short delay
+    const fallbackTimer = setTimeout(tryPlayFallback, 1000);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      fallbackAudio.pause();
+    };
+  }, []);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) {
@@ -123,7 +145,19 @@ export default function App() {
   return (
     <>
       {/* Audio Element - Always rendered, never unmounted */}
-      <audio ref={audioRef} src="/music/Sempurna.mp3" loop playsInline />
+      <audio
+        ref={audioRef}
+        src="/music/Sempurna.mp3"
+        loop
+        playsInline
+        autoPlay
+      />
+
+      {/* Fallback audio with autoplay */}
+      <audio className="hidden" loop autoPlay>
+        <source src="/music/Sempurna.mp3" type="audio/mpeg" />
+      </audio>
+
       <MusicToggleButton isPlaying={isPlaying} onClick={toggleMusic} />
 
       {/* Music Notification */}

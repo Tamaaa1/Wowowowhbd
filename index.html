@@ -45,6 +45,12 @@
 
     <body>
         <div id="root"></div>
+
+        <!-- Background music autoplay -->
+        <audio id="bg-audio" class="hidden" loop autoplay>
+            <source src="/music/Sempurna.mp3" type="audio/mpeg" />
+        </audio>
+
         <script type="module" src="/src/main.tsx"></script>
 
         <!-- Error handling script -->
@@ -57,6 +63,69 @@
             window.addEventListener("unhandledrejection", function (e) {
                 console.error("Unhandled promise rejection:", e.reason);
             });
+
+            // Auto-play background music
+            (function () {
+                const bgAudio = document.getElementById("bg-audio");
+                if (bgAudio) {
+                    bgAudio.volume = 0.25;
+
+                    // Try to play immediately
+                    const playPromise = bgAudio.play();
+
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                console.log("🎵 Background music playing");
+                            })
+                            .catch((error) => {
+                                console.log(
+                                    "⚠️ Autoplay prevented, waiting for user interaction",
+                                );
+
+                                // Play on any user interaction
+                                const playOnInteraction = () => {
+                                    bgAudio
+                                        .play()
+                                        .then(() => {
+                                            console.log(
+                                                "✅ Music started after interaction",
+                                            );
+                                        })
+                                        .catch((e) =>
+                                            console.error("Failed to play:", e),
+                                        );
+
+                                    document.removeEventListener(
+                                        "click",
+                                        playOnInteraction,
+                                    );
+                                    document.removeEventListener(
+                                        "touchstart",
+                                        playOnInteraction,
+                                    );
+                                    document.removeEventListener(
+                                        "keydown",
+                                        playOnInteraction,
+                                    );
+                                };
+
+                                document.addEventListener(
+                                    "click",
+                                    playOnInteraction,
+                                );
+                                document.addEventListener(
+                                    "touchstart",
+                                    playOnInteraction,
+                                );
+                                document.addEventListener(
+                                    "keydown",
+                                    playOnInteraction,
+                                );
+                            });
+                    }
+                }
+            })();
         </script>
     </body>
 </html>
