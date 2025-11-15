@@ -64,67 +64,89 @@
                 console.error("Unhandled promise rejection:", e.reason);
             });
 
-            // Auto-play background music
+            // Mobile-friendly audio unlock
             (function () {
                 const bgAudio = document.getElementById("bg-audio");
-                if (bgAudio) {
-                    bgAudio.volume = 0.25;
+                if (!bgAudio) return;
 
-                    // Try to play immediately
+                bgAudio.volume = 0.25;
+                let audioUnlocked = false;
+
+                // Multiple interaction events for mobile
+                const events = [
+                    "touchstart",
+                    "touchend",
+                    "mousedown",
+                    "click",
+                    "keydown",
+                ];
+
+                const unlockAudio = function (e) {
+                    if (audioUnlocked) return;
+
+                    console.log("🔓 Attempting audio unlock on:", e.type);
+
+                    // Load and play
+                    bgAudio.load();
                     const playPromise = bgAudio.play();
 
                     if (playPromise !== undefined) {
                         playPromise
                             .then(() => {
-                                console.log("🎵 Background music playing");
+                                console.log("✅ Audio unlocked and playing!");
+                                audioUnlocked = true;
+
+                                // Remove all event listeners
+                                events.forEach((event) => {
+                                    document.removeEventListener(
+                                        event,
+                                        unlockAudio,
+                                    );
+                                    window.removeEventListener(
+                                        event,
+                                        unlockAudio,
+                                    );
+                                    document.body.removeEventListener(
+                                        event,
+                                        unlockAudio,
+                                    );
+                                });
                             })
-                            .catch((error) => {
-                                console.log(
-                                    "⚠️ Autoplay prevented, waiting for user interaction",
-                                );
-
-                                // Play on any user interaction
-                                const playOnInteraction = () => {
-                                    bgAudio
-                                        .play()
-                                        .then(() => {
-                                            console.log(
-                                                "✅ Music started after interaction",
-                                            );
-                                        })
-                                        .catch((e) =>
-                                            console.error("Failed to play:", e),
-                                        );
-
-                                    document.removeEventListener(
-                                        "click",
-                                        playOnInteraction,
-                                    );
-                                    document.removeEventListener(
-                                        "touchstart",
-                                        playOnInteraction,
-                                    );
-                                    document.removeEventListener(
-                                        "keydown",
-                                        playOnInteraction,
-                                    );
-                                };
-
-                                document.addEventListener(
-                                    "click",
-                                    playOnInteraction,
-                                );
-                                document.addEventListener(
-                                    "touchstart",
-                                    playOnInteraction,
-                                );
-                                document.addEventListener(
-                                    "keydown",
-                                    playOnInteraction,
-                                );
+                            .catch((err) => {
+                                console.log("⚠️ Play failed:", err.message);
+                                // Keep trying on next interaction
                             });
                     }
+                };
+
+                // Attach to multiple elements for better mobile coverage
+                events.forEach((event) => {
+                    document.addEventListener(event, unlockAudio);
+                    window.addEventListener(event, unlockAudio);
+                    document.body.addEventListener(event, unlockAudio);
+                });
+
+                // Try immediate play (works on desktop)
+                const immediatePlay = bgAudio.play();
+                if (immediatePlay !== undefined) {
+                    immediatePlay
+                        .then(() => {
+                            console.log("🎵 Autoplay successful!");
+                            audioUnlocked = true;
+                        })
+                        .catch(() => {
+                            console.log(
+                                "⚠️ Autoplay blocked, waiting for gesture",
+                            );
+                        });
                 }
+
+                // Force play on page visibility change (mobile resume)
+                document.addEventListener("visibilitychange", () => {
+                    if (!document.hidden && bgAudio.paused) {
+                        bgAudio.play().catch(() => {});
+                    }
+                });
             })();
         </script>
     </body>

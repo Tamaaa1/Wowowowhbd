@@ -11,6 +11,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [isPlaying, setIsPlaying] = useState(false);
   const [showMusicNotification, setShowMusicNotification] = useState(false);
+  const [showStartButton, setShowStartButton] = useState(true);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -20,26 +21,59 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Alternative audio implementation
+  // Aggressive mobile audio unlock
   useEffect(() => {
-    // Create additional audio element as fallback
-    const fallbackAudio = new Audio("/music/Sempurna.mp3");
-    fallbackAudio.loop = true;
-    fallbackAudio.volume = 0.25;
+    const unlockAudio = () => {
+      const audio = audioRef.current;
+      if (!audio) return;
 
-    const tryPlayFallback = () => {
-      fallbackAudio.play().catch(() => {
-        console.log("Fallback audio also blocked");
+      // Force unlock audio context on any user interaction
+      const interactions = [
+        "touchstart",
+        "touchend",
+        "click",
+        "keydown",
+        "mousedown",
+      ];
+
+      const unlock = () => {
+        console.log("🔓 Unlocking audio on user gesture...");
+        audio.load();
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log("✅ Audio unlocked and playing!");
+              setIsPlaying(true);
+              setShowMusicNotification(false);
+              // Remove all listeners after successful unlock
+              interactions.forEach((event) => {
+                document.removeEventListener(event, unlock);
+                window.removeEventListener(event, unlock);
+              });
+            })
+            .catch((err) => {
+              console.log("⚠️ Play attempt:", err.message);
+            });
+        }
+      };
+
+      // Attach to both document and window for better mobile coverage
+      interactions.forEach((event) => {
+        document.addEventListener(event, unlock, { once: false });
+        window.addEventListener(event, unlock, { once: false });
       });
+
+      return () => {
+        interactions.forEach((event) => {
+          document.removeEventListener(event, unlock);
+          window.removeEventListener(event, unlock);
+        });
+      };
     };
 
-    // Try to play fallback audio after a short delay
-    const fallbackTimer = setTimeout(tryPlayFallback, 1000);
-
-    return () => {
-      clearTimeout(fallbackTimer);
-      fallbackAudio.pause();
-    };
+    unlockAudio();
   }, []);
 
   useEffect(() => {
@@ -142,6 +176,24 @@ export default function App() {
     }
   };
 
+  const handleStartButton = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.load();
+      audio
+        .play()
+        .then(() => {
+          console.log("✅ Music started from START button");
+          setIsPlaying(true);
+          setShowStartButton(false);
+          setShowMusicNotification(false);
+        })
+        .catch((err) => {
+          console.error("❌ Failed to start music:", err);
+        });
+    }
+  };
+
   return (
     <>
       {/* Audio Element - Always rendered, never unmounted */}
@@ -160,8 +212,30 @@ export default function App() {
 
       <MusicToggleButton isPlaying={isPlaying} onClick={toggleMusic} />
 
+      {/* START Button for Mobile */}
+      {showStartButton && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        >
+          <motion.button
+            onClick={handleStartButton}
+            className="bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 text-white px-12 py-6 rounded-full text-2xl font-bold shadow-2xl hover:shadow-pink-500/50 transform hover:scale-105 transition-all duration-300 flex items-center gap-4"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="text-4xl">🎵</span>
+            <div className="text-left">
+              <div className="text-2xl font-bold">START</div>
+              <div className="text-sm opacity-90 font-normal">Tap to begin</div>
+            </div>
+          </motion.button>
+        </motion.div>
+      )}
+
       {/* Music Notification */}
-      {showMusicNotification && (
+      {showMusicNotification && !showStartButton && (
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
