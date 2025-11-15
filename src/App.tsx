@@ -10,6 +10,7 @@ export default function App() {
   const [showCard, setShowCard] = useState(false);
   const [currentPage, setCurrentPage] = useState("home");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showMusicNotification, setShowMusicNotification] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -21,8 +22,12 @@ export default function App() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) {
+      console.log("❌ Audio ref not found");
+      return;
+    }
 
+    console.log("🎵 Audio element found, src:", audio.src);
     audio.volume = 0.25;
 
     // Restore music position from localStorage if available
@@ -30,19 +35,34 @@ export default function App() {
     if (savedTime) {
       audio.currentTime = parseFloat(savedTime);
       localStorage.removeItem("musicCurrentTime");
+      console.log("⏩ Restored music position:", savedTime);
     }
 
     const playAudio = () => {
+      console.log("▶️ Attempting to play music...");
       audio
         .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => {
+        .then(() => {
+          setIsPlaying(true);
+          console.log("✅ Music playing successfully!");
+        })
+        .catch((error) => {
+          console.log("⚠️ Autoplay blocked:", error.message);
+          console.log("👆 Click anywhere to start music");
+          setShowMusicNotification(true);
           // Autoplay blocked, try on user interaction
           const handleInteraction = () => {
+            console.log("🖱️ User interaction detected, playing music...");
+            setShowMusicNotification(false);
             audio
               .play()
-              .then(() => setIsPlaying(true))
-              .catch(() => {});
+              .then(() => {
+                setIsPlaying(true);
+                console.log("✅ Music playing after interaction!");
+              })
+              .catch((err) => {
+                console.error("❌ Failed to play music:", err);
+              });
             document.removeEventListener("click", handleInteraction);
             document.removeEventListener("touchstart", handleInteraction);
             document.removeEventListener("keydown", handleInteraction);
@@ -57,6 +77,16 @@ export default function App() {
           });
         });
     };
+
+    // Check if audio can load
+    audio.addEventListener("loadeddata", () => {
+      console.log("✅ Audio file loaded successfully");
+    });
+
+    audio.addEventListener("error", (e) => {
+      console.error("❌ Audio loading error:", e);
+      console.error("Audio src:", audio.src);
+    });
 
     playAudio();
 
@@ -95,6 +125,33 @@ export default function App() {
       {/* Audio Element - Always rendered, never unmounted */}
       <audio ref={audioRef} src="/music/Sempurna.mp3" loop playsInline />
       <MusicToggleButton isPlaying={isPlaying} onClick={toggleMusic} />
+
+      {/* Music Notification */}
+      {showMusicNotification && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          className="fixed bottom-24 right-6 z-50 bg-gradient-to-r from-pink-400 to-pink-500 text-white px-6 py-4 rounded-2xl shadow-2xl max-w-xs"
+          onClick={() => {
+            if (audioRef.current) {
+              audioRef.current.play().then(() => {
+                setIsPlaying(true);
+                setShowMusicNotification(false);
+              });
+            }
+          }}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="text-2xl">🎵</div>
+            <div>
+              <p className="font-semibold text-sm">Klik untuk putar musik</p>
+              <p className="text-xs opacity-90">Tap anywhere to play</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Conditional Page Rendering */}
       {currentPage === "cake" ? (
